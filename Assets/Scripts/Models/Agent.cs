@@ -1,12 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System;
 
-
-public class MovementAgent : MonoBehaviour
+public class Agent : MonoBehaviour
 {
     public float speed = 5.0f;
 
@@ -15,7 +10,7 @@ public class MovementAgent : MonoBehaviour
         StartCoroutine(MoveToPosition(newPosition));
     }
 
-    IEnumerator MoveToPosition(Vector3 newPosition)
+    private IEnumerator MoveToPosition(Vector3 newPosition)
     {
         while (Vector3.Distance(transform.position, newPosition) > 0.05f)
         {
