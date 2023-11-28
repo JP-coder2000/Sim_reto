@@ -98,7 +98,7 @@ public class SimulationManager : MonoBehaviour
     {
         if (foodData == null)
         {
-            Debug.LogError("foodData es null");
+            //Debug.LogError("foodData es null");
             return;
         }
 
@@ -136,7 +136,7 @@ public class SimulationManager : MonoBehaviour
 
     void UpdateDeposit(int[] depositData)
     {
-        Debug.Log("Actualizando depósito");
+        //Debug.Log("Actualizando depósito");
 
         if (depositData == null || depositData.Length < 2)
         {
@@ -148,6 +148,7 @@ public class SimulationManager : MonoBehaviour
         {
             Vector3 position = new Vector3(depositData[0], 0, depositData[1]);
             deposit = Instantiate(depositPrefab, position, Quaternion.identity);
+            Debug.LogError("Se crea deposito");
         }
         else
         {

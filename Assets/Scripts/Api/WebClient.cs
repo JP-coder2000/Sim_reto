@@ -24,7 +24,7 @@ public class WebClient : MonoBehaviour
         form.AddField("bundle", "the data");
         string url = "http://127.0.0.1:5000/step";
 
-        Debug.Log("Enviando datos a: " + url);
+        //Debug.Log("Enviando datos a: " + url);
         Debug.Log("Datos enviados: " + data);
 
         using (UnityWebRequest www = UnityWebRequest.Post(url, form))
@@ -43,7 +43,7 @@ public class WebClient : MonoBehaviour
             }
             else
             {
-                Debug.Log(www.downloadHandler.text); // Respuesta de Python
+                //Debug.Log(www.downloadHandler.text); // Respuesta de Python
                 callback(www.downloadHandler.text);
             }
         }
@@ -51,22 +51,29 @@ public class WebClient : MonoBehaviour
 
     void UpdateScene(Step stepData)
     {
+        Debug.Log("Actualizando escena con datos recibidos");
         // Actualiza agentes
         foreach (var agentData in stepData.agents)
         {
+            Debug.Log($"Procesando agente con ID: {agentData.unique_id} en posición: {agentData.position[0]}, {agentData.position[1]}");
+
             if (!agents.ContainsKey(agentData.unique_id))
             {
-                GameObject agentObj = Instantiate(agentPrefab, new Vector3(agentData.position[0], 0, agentData.position[1]), Quaternion.identity);
-                agents[agentData.unique_id] = agentObj;
+                if (agentPrefab != null)
+                {
+                    GameObject agentObj = Instantiate(agentPrefab, new Vector3(agentData.position[0], 0, agentData.position[1]), Quaternion.identity);
+                    agents[agentData.unique_id] = agentObj;
+                }
+                else
+                {
+                    Debug.LogError("Agent prefab is not set!");
+                }
             }
             else
             {
                 agents[agentData.unique_id].transform.position = new Vector3(agentData.position[0], 0, agentData.position[1]);
             }
-            // Aquí puedes agregar más lógica para actualizar el estado del agente
         }
-
-        // Lógica similar para comida y depósito
     }
 
     // Start is called before the first frame update
@@ -80,14 +87,14 @@ public class WebClient : MonoBehaviour
 
     private void HandleResponse(string response)
     {
+        Debug.Log("response");
         if (response != null)
         {
-            Debug.Log("Respuesta recibida: " + response);
             Step stepData = JsonUtility.FromJson<Step>(response);
             if (stepData != null)
             {
-                Debug.Log("Datos deserializados correctamente");
-                UpdateScene(stepData);  // Llama a UpdateScene aquí
+                Debug.Log(":(");
+                UpdateScene(stepData);
             }
             else
             {
@@ -99,6 +106,7 @@ public class WebClient : MonoBehaviour
             Debug.LogError("Respuesta nula o vacía");
         }
     }
+
 
     // Update is called once per frame
     void Update()
