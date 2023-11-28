@@ -2,7 +2,7 @@
 
 public class Step
 {
-    public agents[] agent;
+    public agent[] agents;
 }
 
 public class agent
