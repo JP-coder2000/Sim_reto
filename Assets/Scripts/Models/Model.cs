@@ -1,8 +1,9 @@
 [System.Serializable]
-
 public class Step
 {
     public agent[] agents;
+    public int[][] food; 
+    public int[] deposit_cell;
 }
 
 public class agent
@@ -13,14 +14,3 @@ public class agent
     public int type;
     public int unique_id;
 }
-
-public class deposit
-{
-    public int[] position;
-}
-
-public class food
-{
-    public int[] position;
-}
-

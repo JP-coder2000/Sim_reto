@@ -2,6 +2,7 @@
 // C# client to interact with Python server via POST
 // Sergio Ruiz-Loza, Ph.D. March 2021
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -10,12 +11,22 @@ using UnityEngine.Networking;
 
 public class WebClient : MonoBehaviour
 {
+    public GameObject agentPrefab;
+    public GameObject foodPrefab; 
+    public GameObject depositPrefab; 
+
+    private Dictionary<int, GameObject> agents = new Dictionary<int, GameObject>();
+
     // IEnumerator - yield return
-    IEnumerator SendData(string data)
+    public IEnumerator SendData(string data, Action<string> callback)
     {
         WWWForm form = new WWWForm();
         form.AddField("bundle", "the data");
         string url = "http://127.0.0.1:5000/step";
+
+        Debug.Log("Enviando datos a: " + url);
+        Debug.Log("Datos enviados: " + data);
+
         using (UnityWebRequest www = UnityWebRequest.Post(url, form))
         {
             byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(data);
@@ -24,31 +35,69 @@ public class WebClient : MonoBehaviour
             //www.SetRequestHeader("Content-Type", "text/html");
             www.SetRequestHeader("Content-Type", "application/json");
 
-            yield return www.SendWebRequest();          // Talk to Python
-            if(www.isNetworkError || www.isHttpError)
+            yield return www.SendWebRequest(); // Talk to Python
+            if (www.isNetworkError || www.isHttpError)
             {
                 Debug.Log(www.error);
+                callback(null);
             }
             else
             {
-                Debug.Log(www.downloadHandler.text);    // Answer from Python
-                Model tPos = JsonUtility.FromJson<Model>(www.downloadHandler.text.Replace('\'', '\"'));
-                //Debug.Log("Form upload complete!");
-                Debug.Log(tPos);
+                Debug.Log(www.downloadHandler.text); // Respuesta de Python
+                callback(www.downloadHandler.text);
             }
         }
+    }
 
+    void UpdateScene(Step stepData)
+    {
+        // Actualiza agentes
+        foreach (var agentData in stepData.agents)
+        {
+            if (!agents.ContainsKey(agentData.unique_id))
+            {
+                GameObject agentObj = Instantiate(agentPrefab, new Vector3(agentData.position[0], 0, agentData.position[1]), Quaternion.identity);
+                agents[agentData.unique_id] = agentObj;
+            }
+            else
+            {
+                agents[agentData.unique_id].transform.position = new Vector3(agentData.position[0], 0, agentData.position[1]);
+            }
+            // Aquí puedes agregar más lógica para actualizar el estado del agente
+        }
+
+        // Lógica similar para comida y depósito
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        //string call = "What's up?";
         Vector3 fakePos = new Vector3(3.44f, 0, -15.707f);
         string json = EditorJsonUtility.ToJson(fakePos);
-        //StartCoroutine(SendData(call));
-        StartCoroutine(SendData(json));
-        // transform.localPosition
+
+        StartCoroutine(SendData(json, HandleResponse));
+    }
+
+    private void HandleResponse(string response)
+    {
+        if (response != null)
+        {
+            Debug.Log("Respuesta recibida: " + response);
+            Step stepData = JsonUtility.FromJson<Step>(response);
+            if (stepData != null)
+            {
+                Debug.Log("Datos deserializados correctamente");
+                UpdateScene(stepData);  // Llama a UpdateScene aquí
+            }
+            else
+            {
+                Debug.LogError("Error al deserializar la respuesta");
+            }
+        }
+        else
+        {
+            Debug.LogError("Respuesta nula o vacía");
+        }
     }
 
     // Update is called once per frame
