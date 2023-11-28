@@ -2,7 +2,7 @@
 public class Step
 {
     public agent[] agents;
-    public int[][] food;
+    public food[] food;
     public int[] deposit_cell;
 }
 
@@ -14,4 +14,10 @@ public class agent
     public string role;
     public int type;
     public int unique_id;
+}
+
+[System.Serializable]
+public class food
+{
+    public int[] position;
 }

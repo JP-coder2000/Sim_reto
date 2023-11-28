@@ -93,32 +93,26 @@ public class SimulationManager : MonoBehaviour
         }
     }
 
-
-    void UpdateFood(int[][] foodData)
+    void UpdateFood(food[] foodData)
     {
         if (foodData == null)
         {
-            //Debug.LogError("foodData es null");
+            Debug.LogError("foodData es null");
             return;
-        }
-
-        if (foods == null)
-        {
-            foods = new Dictionary<string, GameObject>();
         }
 
         Debug.Log($"Actualizando {foodData.Length} objetos de comida");
 
-        foreach (int[] f in foodData)
+        foreach (food f in foodData)
         {
-            if (f == null || f.Length < 2)
+            if (f == null || f.position == null || f.position.Length < 2)
             {
                 Debug.LogError("Datos de comida inválidos");
                 continue;
             }
 
-            Vector3 position = new Vector3(f[0], 0, f[1]);
-            string foodKey = $"{f[0]}_{f[1]}";
+            Vector3 position = new Vector3(f.position[0], 0, f.position[1]);
+            string foodKey = $"{f.position[0]}_{f.position[1]}";
             GameObject foodObj;
 
             if (!foods.TryGetValue(foodKey, out foodObj))
@@ -130,6 +124,8 @@ public class SimulationManager : MonoBehaviour
             else
             {
                 // Opcional: actualizar la posición de la comida si cambia
+                Debug.Log($"Actualizando posición de la comida en {position}");
+                foodObj.transform.position = position;
             }
         }
     }
