@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class SimulationManager : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class SimulationManager : MonoBehaviour
     private Dictionary<int, GameObject> agents = new Dictionary<int, GameObject>();
     private Dictionary<string, GameObject> foods = new Dictionary<string, GameObject>();
     private GameObject deposit;
+
+    private const int MaxAgents = 5;
 
     void Start()
     {
@@ -35,23 +38,6 @@ public class SimulationManager : MonoBehaviour
         }
     }
 
-    //void UpdateAgents(agent[] agentData)
-    //    {
-    //    Debug.Log($"Actualizando {agentData.Length} agentes");
-    //    foreach (agent a in agentData)
-    //        {
-    //            GameObject agentObj;
-    //            if (!agents.TryGetValue(a.unique_id, out agentObj))
-    //            {
-    //                agentObj = Instantiate(agentPrefab, new Vector3(a.position[0], 0, a.position[1]), Quaternion.identity);
-    //                agents[a.unique_id] = agentObj;
-    //            }
-    //            Agent agentScript = agentObj.GetComponent<Agent>();
-    //            Vector3 newPosition = new Vector3(a.position[0], 0, a.position[1]);
-    //            agentScript.MoveTo(newPosition);
-    //            }
-    //    }
-
     void UpdateAgents(agent[] agentData)
     {
         if (agentData == null)
@@ -62,7 +48,7 @@ public class SimulationManager : MonoBehaviour
 
         Debug.Log($"Actualizando {agentData.Length} agentes");
 
-        foreach (agent a in agentData)
+        foreach (agent a in agentData.Take(MaxAgents))
         {
             if (a == null)
             {
@@ -85,11 +71,15 @@ public class SimulationManager : MonoBehaviour
             }
             else
             {
-                Debug.Log($"Actualizando posición del agente con ID {a.unique_id}");
-                agentObj.transform.position = new Vector3(a.position[0], 0, a.position[1]);
+                Agent agentScript = agentObj.GetComponent<Agent>();
+                Vector3 newPosition = new Vector3(a.position[0], 0, a.position[1]);
+                agentScript.MoveTo(newPosition);
             }
 
-            // Aquí puedes agregar más lógica para actualizar el estado del agente
+            if (agents.Count >= MaxAgents)
+            {
+                break;
+            }
         }
     }
 
@@ -115,25 +105,27 @@ public class SimulationManager : MonoBehaviour
             string foodKey = $"{f.position[0]}_{f.position[1]}";
             GameObject foodObj;
 
+            if (f.deposited)
+            {
+                if (foods.TryGetValue(foodKey, out foodObj))
+                {
+                    Destroy(foodObj);
+                    foods.Remove(foodKey);
+                }
+                continue;
+            }
+
             if (!foods.TryGetValue(foodKey, out foodObj))
             {
                 Debug.Log($"Creando comida en {position}");
                 foodObj = Instantiate(foodPrefab, position, Quaternion.identity);
                 foods[foodKey] = foodObj;
             }
-            else
-            {
-                // Opcional: actualizar la posición de la comida si cambia
-                Debug.Log($"Actualizando posición de la comida en {position}");
-                foodObj.transform.position = position;
-            }
         }
     }
 
     void UpdateDeposit(int[] depositData)
     {
-        //Debug.Log("Actualizando depósito");
-
         if (depositData == null || depositData.Length < 2)
         {
             Debug.LogError("Datos de depósito inválidos o incompletos");
@@ -143,12 +135,10 @@ public class SimulationManager : MonoBehaviour
         if (deposit == null)
         {
             Vector3 position = new Vector3(depositData[0], 0, depositData[1]);
-            deposit = Instantiate(depositPrefab, position, Quaternion.identity);
+            Quaternion rotation = Quaternion.Euler(-90, 0, 90);
+            deposit = Instantiate(depositPrefab, position, rotation); 
             Debug.LogError("Se crea deposito");
         }
-        else
-        {
-            // Actualizar la posición del depósito si es necesario
-        }
     }
+
 }

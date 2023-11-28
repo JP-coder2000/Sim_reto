@@ -11,11 +11,11 @@ using UnityEngine.Networking;
 
 public class WebClient : MonoBehaviour
 {
-    public GameObject agentPrefab;
-    public GameObject foodPrefab; 
-    public GameObject depositPrefab; 
+    //public GameObject agentPrefab;
+    //public GameObject foodPrefab;
+    //public GameObject depositPrefab;
 
-    private Dictionary<int, GameObject> agents = new Dictionary<int, GameObject>();
+    //private Dictionary<int, GameObject> agents = new Dictionary<int, GameObject>();
 
     // IEnumerator - yield return
     public IEnumerator SendData(string data, Action<string> callback)
@@ -43,75 +43,73 @@ public class WebClient : MonoBehaviour
             }
             else
             {
-                //Debug.Log(www.downloadHandler.text); // Respuesta de Python
+                Debug.Log(www.downloadHandler.text); // Respuesta de Python
                 callback(www.downloadHandler.text);
             }
         }
     }
 
-    void UpdateScene(Step stepData)
-    {
-        Debug.Log("Actualizando escena con datos recibidos");
-        // Actualiza agentes
-        foreach (var agentData in stepData.agents)
-        {
-            Debug.Log($"Procesando agente con ID: {agentData.unique_id} en posición: {agentData.position[0]}, {agentData.position[1]}");
+    //void UpdateScene(Step stepData)
+    //{
+    //    Debug.Log("Actualizando escena con datos recibidos");
+    //    //// Actualiza agentes
+    //    //foreach (var agentData in stepData.agents)
+    //    //{
+    //    //    Debug.Log($"Procesando agente con ID: {agentData.unique_id} en posición: {agentData.position[0]}, {agentData.position[1]}");
 
-            if (!agents.ContainsKey(agentData.unique_id))
-            {
-                if (agentPrefab != null)
-                {
-                    GameObject agentObj = Instantiate(agentPrefab, new Vector3(agentData.position[0], 0, agentData.position[1]), Quaternion.identity);
-                    agents[agentData.unique_id] = agentObj;
-                }
-                else
-                {
-                    Debug.LogError("Agent prefab is not set!");
-                }
-            }
-            else
-            {
-                agents[agentData.unique_id].transform.position = new Vector3(agentData.position[0], 0, agentData.position[1]);
-            }
-        }
-    }
+    //    //    if (!agents.ContainsKey(agentData.unique_id))
+    //    //    {
+    //    //        if (agentPrefab != null)
+    //    //        {
+    //    //            GameObject agentObj = Instantiate(agentPrefab, new Vector3(agentData.position[0], 0, agentData.position[1]), Quaternion.identity);
+    //    //            agents[agentData.unique_id] = agentObj;
+    //    //        }
+    //    //        else
+    //    //        {
+    //    //            Debug.LogError("Agent prefab is not set!");
+    //    //        }
+    //    //    }
+    //    //    else
+    //    //    {
+    //    //        agents[agentData.unique_id].transform.position = new Vector3(agentData.position[0], 0, agentData.position[1]);
+    //    //    }
+    //    //}
+    //}
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        Vector3 fakePos = new Vector3(3.44f, 0, -15.707f);
-        string json = EditorJsonUtility.ToJson(fakePos);
+    //// Start is called before the first frame update
+    //void Start()
+    //{
+    //    Vector3 fakePos = new Vector3(3.44f, 0, -15.707f);
+    //    string json = EditorJsonUtility.ToJson(fakePos);
 
-        StartCoroutine(SendData(json, HandleResponse));
-    }
+    //    StartCoroutine(SendData(json, HandleResponse));
+    //}
 
-    private void HandleResponse(string response)
-    {
-        Debug.Log("response");
-        if (response != null)
-        {
-            Step stepData = JsonUtility.FromJson<Step>(response);
-            if (stepData != null)
-            {
-                Debug.Log("Datos deserializados correctamente");
-                UpdateScene(stepData);
-            }
-            else
-            {
-                Debug.LogError("Error al deserializar la respuesta");
-            }
-        }
-        else
-        {
-            Debug.LogError("Respuesta nula o vacía");
-        }
-    }
-
-
+    //private void HandleResponse(string response)
+    //{
+    //    Debug.Log("response");
+    //    if (response != null)
+    //    {
+    //        Step stepData = JsonUtility.FromJson<Step>(response);
+    //        if (stepData != null)
+    //        {
+    //            Debug.Log("Datos deserializados correctamente");
+    //            UpdateScene(stepData);
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Error al deserializar la respuesta");
+    //        }
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError("Respuesta nula o vacía");
+    //    }
+    //}
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

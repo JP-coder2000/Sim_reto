@@ -20,4 +20,5 @@ public class agent
 public class food
 {
     public int[] position;
+    public bool deposited;
 }
