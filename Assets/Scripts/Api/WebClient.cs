@@ -93,7 +93,7 @@ public class WebClient : MonoBehaviour
             Step stepData = JsonUtility.FromJson<Step>(response);
             if (stepData != null)
             {
-                Debug.Log(":(");
+                Debug.Log("Datos deserializados correctamente");
                 UpdateScene(stepData);
             }
             else
@@ -106,6 +106,7 @@ public class WebClient : MonoBehaviour
             Debug.LogError("Respuesta nula o vacía");
         }
     }
+
 
 
     // Update is called once per frame

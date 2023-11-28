@@ -2,10 +2,11 @@
 public class Step
 {
     public agent[] agents;
-    public int[][] food; 
+    public int[][] food;
     public int[] deposit_cell;
 }
 
+[System.Serializable]
 public class agent
 {
     public bool carrying_food;
