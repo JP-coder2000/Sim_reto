@@ -21,4 +21,15 @@ public class Agent : MonoBehaviour
             yield return null;
         }
     }
+
+    public void UpdateRole(string newRole)
+    {
+        role = newRole;
+        // Aquí puedes agregar más lógica, como cambiar la apariencia del agente según su rol
+    }
+
+    public bool IsCarrying()
+    {
+        return carrying_food;
+    }
 }

@@ -77,6 +77,8 @@ public class SimulationManager : MonoBehaviour
                 Agent agentScript = agentObj.GetComponent<Agent>();
                 Vector3 newPosition = new Vector3(a.position[0], 0, a.position[1]+ 72.3f);
                 agentScript.MoveTo(newPosition);
+                agentScript.UpdateRole(a.role);
+                agentScript.carrying_food = a.carrying_food;
                 Debug.Log($"Log de Sebas {agentObj.GetComponent<Agent>().unique_id}");
             }
         }
