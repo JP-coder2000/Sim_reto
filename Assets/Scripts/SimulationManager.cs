@@ -9,6 +9,7 @@ public class SimulationManager : MonoBehaviour
     public GameObject agentPrefab;
     public GameObject foodPrefab;
     public GameObject depositPrefab;
+    public float timeScale = 1f;
 
     private Dictionary<int, GameObject> agents = new Dictionary<int, GameObject>();
     private Dictionary<string, GameObject> foods = new Dictionary<string, GameObject>();
@@ -19,6 +20,7 @@ public class SimulationManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(UpdateSimulation());
+        Time.timeScale = timeScale;
     }
 
     IEnumerator UpdateSimulation()
@@ -45,7 +47,7 @@ public class SimulationManager : MonoBehaviour
             Debug.LogError("agentData es null");
             return;
         }
-
+        
         Debug.Log($"Actualizando {agentData.Length} agentes");
 
         foreach (agent a in agentData.Take(MaxAgents))
@@ -66,19 +68,16 @@ public class SimulationManager : MonoBehaviour
                 }
 
                 Debug.Log($"Creando agente con ID {a.unique_id} en la posición {a.position[0]}, {a.position[1]}");
-                agentObj = Instantiate(agentPrefab, new Vector3(a.position[0], 0, a.position[1]), Quaternion.identity);
+                agentObj = Instantiate(agentPrefab, new Vector3(a.position[0], 0, a.position[1] + 72.3f), Quaternion.identity);
                 agents[a.unique_id] = agentObj;
+                agentObj.GetComponent<Agent>().unique_id = a.unique_id;
             }
             else
-            {
+            {   
                 Agent agentScript = agentObj.GetComponent<Agent>();
-                Vector3 newPosition = new Vector3(a.position[0], 0, a.position[1]);
+                Vector3 newPosition = new Vector3(a.position[0], 0, a.position[1]+ 72.3f);
                 agentScript.MoveTo(newPosition);
-            }
-
-            if (agents.Count >= MaxAgents)
-            {
-                break;
+                Debug.Log($"Log de Sebas {agentObj.GetComponent<Agent>().unique_id}");
             }
         }
     }
@@ -101,7 +100,7 @@ public class SimulationManager : MonoBehaviour
                 continue;
             }
 
-            Vector3 position = new Vector3(f.position[0], 0, f.position[1]);
+            Vector3 position = new Vector3(f.position[0], 0, f.position[1] + 72.3f);
             string foodKey = $"{f.position[0]}_{f.position[1]}";
             GameObject foodObj;
 
@@ -134,7 +133,7 @@ public class SimulationManager : MonoBehaviour
 
         if (deposit == null)
         {
-            Vector3 position = new Vector3(depositData[0], 0, depositData[1]);
+            Vector3 position = new Vector3(depositData[0], 0, depositData[1]  + 72.3f);
             Quaternion rotation = Quaternion.Euler(-90, 0, 90);
             deposit = Instantiate(depositPrefab, position, rotation); 
             Debug.LogError("Se crea deposito");
